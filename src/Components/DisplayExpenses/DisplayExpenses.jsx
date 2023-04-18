@@ -1,13 +1,30 @@
 import Table from "react-bootstrap/Table";
 import styles from "./DisplayExpense.module.css";
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
+import { useState } from "react";
 
 const DisplayExpenses = (props) => {
-  const { listExpenses } = props;
-  let add = 0;
+  const { listExpenses, deleteExpense, error, success } = props;
+  let totalIncome = 0;
+  let totalExpense = 0;
+  console.log("error", error);
+  console.log("success", success);
+  const [err, setErr] = useState(error);
+  const [sucs, setSucs] = useState(success);
+
   return (
     <>
       <h5 style={{ textAlign: "center" }}>List of all incomes and expenses</h5>
+      {err && (
+        <Alert onClose={() => setErr("")} variant="danger" dismissible>
+          {err}
+        </Alert>
+      )}
+      {sucs && (
+        <Alert onClose={() => setSucs("")} variant="danger" dismissible>
+          {sucs}
+        </Alert>
+      )}
       <Table striped className={styles.table}>
         <thead>
           <tr>
@@ -18,10 +35,10 @@ const DisplayExpenses = (props) => {
               Expense Name
             </th>
             <th className={styles.border} width="5%">
-              Type
+              You Got
             </th>
             <th className={styles.border} width="5%">
-              Amount
+              You Gave
             </th>
             <th className={styles.border} width="10%">
               Date
@@ -33,10 +50,11 @@ const DisplayExpenses = (props) => {
         </thead>
         <tbody>
           {listExpenses.map((exp, index) => {
-            const amt = `${
-              exp.expense_type === 2 ? "-" + exp.amount : exp.amount
-            }`;
-            add = add + parseInt(amt);
+            if (exp.expense_type === 1) {
+              totalIncome = totalIncome + parseInt(exp.amount);
+            } else {
+              totalExpense = totalExpense + parseInt(exp.amount);
+            }
             return (
               <tr key={index}>
                 <td className={styles.border}>{index + 1}</td>
@@ -44,26 +62,52 @@ const DisplayExpenses = (props) => {
                   style={{
                     border: "1px solid black",
                     justifyContent: "center",
+                    verticalAlign: "middle",
                   }}
                 >
                   {exp.name}
                 </td>
-                <td className={styles.border}>
-                  {exp.expense_type === 1 ? "Income" : "Expense"}
+                <td
+                  style={{
+                    color: "green",
+                    border: "1px solid black",
+                    justifyContent: "center",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  {exp.expense_type === 1 ? (
+                    <p style={{ margin: "0px" }}>{exp.amount}</p>
+                  ) : (
+                    ""
+                  )}
                 </td>
                 <td
-                  style={
-                    exp.expense_type === 2
-                      ? { color: "red", border: "1px solid black" }
-                      : { color: "green", border: "1px solid black" }
-                  }
+                  style={{
+                    color: "red",
+                    border: "1px solid black",
+                    justifyContent: "center",
+                    verticalAlign: "middle",
+                  }}
                 >
-                  {exp.amount}
+                  {exp.expense_type === 2 ? (
+                    <p style={{ margin: "0px" }}>{exp.amount}</p>
+                  ) : (
+                    ""
+                  )}
                 </td>
                 <td className={styles.border}>{exp.date}</td>
                 <td className={styles.border}>
-                  <Button variant="success">Edit</Button>
-                  <Button variant="danger" style={{ marginLeft: "5px" }}>
+                  <Button variant="success" size="sm">
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => {
+                      deleteExpense(exp.id);
+                    }}
+                  >
                     Delete
                   </Button>
                 </td>
@@ -74,15 +118,31 @@ const DisplayExpenses = (props) => {
         <tfoot>
           <tr>
             <td
-              colSpan={3}
+              colSpan={2}
               style={{ fontWeight: "bold", border: "1px solid black" }}
             >
               Total
             </td>
-            <td style={{ border: "1px solid black", fontWeight: "bold" }}>
-              {add}
+            <td className={styles.totalIncome}>{Math.abs(totalIncome)}</td>
+            <td className={styles.totalExpenses}>{Math.abs(totalExpense)}</td>
+            <td style={{ border: "1px solid black" }} colSpan={2}>
+              Net Amount:{" "}
+              <strong
+                style={
+                  totalIncome - totalExpense > 0
+                    ? {
+                        fontWeight: "bold",
+                        color: "green",
+                      }
+                    : {
+                        fontWeight: "bold",
+                        color: "red",
+                      }
+                }
+              >
+                {Math.abs(totalIncome - totalExpense)}
+              </strong>
             </td>
-            <td colSpan={2} className={styles.border}></td>
           </tr>
         </tfoot>
       </Table>

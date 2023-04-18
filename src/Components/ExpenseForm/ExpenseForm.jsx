@@ -2,6 +2,8 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import style from "./ExpenseForm.module.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const options = [
   { value: "1", label: "Income" },
@@ -15,6 +17,9 @@ const date = `${current.getDate()}/${
 
 const ExpenseForm = (props) => {
   const { saveTask } = props;
+  const taskDetails = sessionStorage.getItem("title");
+  const { name, id } = JSON.parse(taskDetails);
+  // console.log(name, id);
 
   const [expenseType, setExpenseType] = useState("");
   const expenseTypeChangeHandler = (e) => {
@@ -37,14 +42,19 @@ const ExpenseForm = (props) => {
   };
 
   const saveTaskHandler = () => {
+    let user = JSON.parse(localStorage.getItem("user"));
+    let user_id = user.id;
+    console.log(expenseDate);
     if (expenseName && expenseType && expenseAmount && expenseDate) {
       const amount =
         expenseType === "Expense" ? "-" + expenseAmount : expenseAmount;
       const expense = {
+        title: id,
         name: expenseName,
         type: expenseType,
         amount: parseInt(amount).toFixed(2),
         date: expenseDate,
+        user_id,
       };
       saveTask(expense);
       setExpenseType("");
@@ -60,6 +70,11 @@ const ExpenseForm = (props) => {
     <>
       <div className={style.main}>
         <div>
+          <div style={{ textAlign: "center", fontWeight: "bolder" }}>
+            <label htmlFor="ExpenseName">Title Name</label>
+            <p>{name}</p>
+          </div>
+          <br />
           <label htmlFor="ExpenseName">Expense Name</label>
           {/* <br /> */}
           <Form.Control
@@ -106,7 +121,16 @@ const ExpenseForm = (props) => {
           />
           <br />
           <label htmlFor="amount">Date</label>
-          {/* <br /> */}
+          {/* <DatePicker
+            selected={expenseDate}
+            dateFormat="MM/dd/yyyy h:mm aa"
+            onChange={expenseDateChangeHandler}
+            // maxDate={new Date()}
+            locale="en-GB"
+            placeholderText="Select Date!"
+            className="red-border"
+            // className={style.date}
+          /> */}
           <Form.Control
             type="date"
             name="date"

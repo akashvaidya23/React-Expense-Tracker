@@ -17,4 +17,31 @@
 
 .border {
   border: 1px solid black;
+  vertical-align: middle;
+}
+
+.totalIncome {
+  border: 1px solid black;
+  font-weight: bolder;
+  color: green;
+  vertical-align: middle;
+}
+
+.totalExpenses {
+  border: 1px solid black;
+  font-weight: bolder;
+  color: red;
+  vertical-align: middle;
+}
+
+.incomes {
+  color: green;
+  border: 1px solid black;
+  vertical-align: middle;
+}
+
+.expense {
+  color: red;
+  border: 1px solid black;
+  vertical-align: middle;
 }

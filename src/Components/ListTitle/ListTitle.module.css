@@ -1,0 +1,10 @@
+.table {
+  width: 40%;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.border {
+  border: 1px solid black;
+}
